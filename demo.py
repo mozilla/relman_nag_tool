@@ -368,6 +368,6 @@ app.add_url_rule('/relman_nag/create_query', view_func=Create_Query.as_view('cre
 app.add_url_rule('/relman_nag/edit_template', view_func=Edit_Template.as_view('edit_template'), methods=['GET','POST'])
 app.add_url_rule('/relman_nag/show_message', view_func=Show_Message.as_view('show_message'), methods=['GET','POST'])
 
-
-app.debug = True
-app.run()
+if __name__ == '__main__':
+    app.debug = True
+    app.run()
