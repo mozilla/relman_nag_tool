@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-A script for automated nagging emails listing all the bugs being tracked by certain queries
+hiA script for automated nagging emails listing all the bugs being tracked by certain queries
 These can be collated into several 'queries' through the use of multiple query files with 
 a 'query_name' param set eg: 'Bugs tracked for Firefox Beta (13)'
 Once the bugs have been collected from bugzilla they are sorted into buckets by assignee manager
