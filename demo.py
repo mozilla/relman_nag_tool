@@ -107,12 +107,12 @@ class Main(flask.views.MethodView):
 	def post(self):
 		if 'logout' in flask.request.form:
 			flask.session.pop('username', None)
-			return flask.redirect(flask.url_for('login'))
+			return flask.redirect(flask.url_for('index'))
 		required = ['username', 'passwd']
 		for r in required:
 			if r not in flask.request.form:
 				flask.flash("Error: {0} is required.".format(r))
-				return flask.redirect(flask.url_for('login'))
+				return flask.redirect(flask.url_for('index'))
 		username = flask.request.form['username']
 		passwd = flask.request.form['passwd']
 		try:
@@ -122,7 +122,7 @@ class Main(flask.views.MethodView):
 			
 		except Exception:
 			flask.flash("Username doesn't exist or incorrect password")
-			return flask.redirect(flask.url_for('login'))
+			return flask.redirect(flask.url_for('index'))
 		return flask.redirect(flask.url_for('show_templates'))
 		
 def login_required(method):
@@ -358,7 +358,7 @@ class Show_Message(flask.views.MethodView):
  
 app.add_url_rule('/',view_func=Main.as_view('index'), methods=['GET','POST'])
 app.add_url_rule('/relman_nag',view_func=Main.as_view('login'), methods=['GET','POST'])
-app.add_url_rule('/relman_nag/show_templates', view_func=Show_Templates.as_view('show_templates'), methods=['GET','POST'])
+app.add_url_rule('/relman_nag/relman_nag/show_templates', view_func=Show_Templates.as_view('show_templates'), methods=['GET','POST'])
 app.add_url_rule('/relman_nag/create_template', view_func=Create_Template.as_view('create_template'), methods=['GET','POST'])
 app.add_url_rule('/relman_nag/use_template', view_func=Use_Template.as_view('use_template'), methods=['GET','POST'])
 app.add_url_rule('/relman_nag/use_query', view_func=Use_Query.as_view('use_query'), methods=['GET','POST'])
