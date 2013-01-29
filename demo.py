@@ -18,6 +18,7 @@ from flaskext.kvsession import KVSessionExtension
 # documentation for details
 store = DictStore()
 
+# This is to get the routing on the server to recognize it's under a subdomain
 class WebFactionMiddleware(object):
     def __init__(self, app):
         self.app = app
@@ -29,11 +30,8 @@ class WebFactionMiddleware(object):
 app = flask.Flask(__name__)
 app.wsgi_app = WebFactionMiddleware(app.wsgi_app)
 
-# Dont do this !
-
 # this will replace the app's session handling
 KVSessionExtension(store, app)
-
 
 # configuration
 app.secret_key = "iphone"
@@ -41,7 +39,6 @@ app.config['DEBUG'] = True
 DATABASE = '/tmp/flaskr.db'
 app.config.from_object(__name__)
 app.config['PROPAGATE_EXCEPTIONS'] = True
-app.config['APPLICATION_ROOT'] = '/relman_nag'
 
 #db = SQLAlchemy(app)
 def connect_db():
@@ -110,17 +107,17 @@ def get_queries():
 
 class Main(flask.views.MethodView):
 	def get(self):
-		return flask.render_template('index.html')
+		return flask.render_template('login.html')
 
 	def post(self):
 		if 'logout' in flask.request.form:
 			flask.session.pop('username', None)
-			return flask.redirect(flask.url_for('index'))
+			return flask.redirect(flask.url_for('login'))
 		required = ['username', 'passwd']
 		for r in required:
 			if r not in flask.request.form:
 				flask.flash("Error: {0} is required.".format(r))
-				return flask.redirect(flask.url_for('index'))
+				return flask.redirect(flask.url_for('login'))
 		username = flask.request.form['username']
 		passwd = flask.request.form['passwd']
 		try:
@@ -130,7 +127,7 @@ class Main(flask.views.MethodView):
 			
 		except Exception:
 			flask.flash("Username doesn't exist or incorrect password")
-			return flask.redirect(flask.url_for('index'))
+			return flask.redirect(flask.url_for('login'))
 		return flask.redirect(flask.url_for('show_templates'))
 		
 def login_required(method):
@@ -142,7 +139,7 @@ def login_required(method):
 				return method(*args, **kwargs)
 			else:
 				flask.flash("a login is required to view this page!")
-				return flask.redirect(flask.url_for('index'))
+				return flask.redirect(flask.url_for('login'))
 		except Exception :
 			print Exception
 	return wrapper
@@ -361,11 +358,8 @@ class Show_Message(flask.views.MethodView):
 		except Exception :
 			print "\nException:"
 			print Exception
-		
 
- 
-app.add_url_rule('/',view_func=Main.as_view('index'), methods=['GET'])
-app.add_url_rule('/relman_login',view_func=Main.as_view('relman_login'), methods=['GET','POST'])
+app.add_url_rule('/login',view_func=Main.as_view('login'), methods=['GET','POST'])
 app.add_url_rule('/show_templates', view_func=Show_Templates.as_view('show_templates'), methods=['GET','POST'])
 app.add_url_rule('/create_template', view_func=Create_Template.as_view('create_template'), methods=['GET','POST'])
 app.add_url_rule('/use_template', view_func=Use_Template.as_view('use_template'), methods=['GET','POST'])
