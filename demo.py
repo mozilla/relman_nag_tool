@@ -148,7 +148,7 @@ class Show_Templates(flask.views.MethodView):
 	def get(self):
 		return flask.render_template('show_templates.html',list_templates  = get_templates())
 	
-	@login_required
+	
 	def post(self):
 		if 'create_template' in flask.request.form:
 			return flask.redirect(flask.url_for('create_template'))
@@ -177,13 +177,13 @@ class Show_Templates(flask.views.MethodView):
 			
 					      
 class Use_Template(flask.views.MethodView):
-	@login_required
+	
 	def get(self):
 		template_id = request.args.get('id')
 		print template_id
 		return flask.render_template('use_template.html',selected_template = get_selected_template(template_id))
 	
-	@login_required
+	
 	def post(self):
 		#flask.flash("Not implemented")
 		if 'Next' in flask.request.form:
@@ -196,7 +196,7 @@ class Use_Template(flask.views.MethodView):
 					      #return flask.redirect(flask.url_for('show_templates'))
 					      
 class Use_Query(flask.views.MethodView):
-	@login_required
+	
 	def get(self):
 		
 		query_id_list = request.args.getlist('idlist')
@@ -218,7 +218,7 @@ class Use_Query(flask.views.MethodView):
 			print "\nException:\n"
 			print Exception,e
 	
-	@login_required
+	
 	def post(self):
 		#flask.flash("Not implemented")
 		#if 'use_query' in flask.request.form:
@@ -229,7 +229,7 @@ class Use_Query(flask.views.MethodView):
 					      #return flask.redirect(flask.url_for('show_templates'))
 					      
 class Delete_Template(flask.views.MethodView):
-	@login_required
+	
 	def get(self):
 		template_id_list = request.args.getlist('idlist')
 		print template_id_list
@@ -237,7 +237,7 @@ class Delete_Template(flask.views.MethodView):
 			delete_template(template_id)
 		return flask.redirect(flask.url_for('show_templates'))
 	
-	@login_required
+	
 	def post(self):
 		#flask.flash("Not implemented")
 		if 'use_template' in flask.request.form:
@@ -245,7 +245,7 @@ class Delete_Template(flask.views.MethodView):
 					      #return flask.redirect(flask.url_for('show_templates'))
 					      
 class Delete_Query(flask.views.MethodView):
-	@login_required
+	
 	def get(self):
 		query_id_list = request.args.getlist('idlist')
 		print query_id_list
@@ -253,7 +253,7 @@ class Delete_Query(flask.views.MethodView):
 			delete_query(query_id)
 		return flask.redirect(flask.url_for('show_queries'))
 	
-	@login_required
+	
 	def post(self):
 		#flask.flash("Not implemented")
 		if 'use_query' in flask.request.form:
@@ -261,12 +261,12 @@ class Delete_Query(flask.views.MethodView):
 					      #return flask.redirect(flask.url_for('show_templates'))
 
 class Create_Template(flask.views.MethodView):
-	@login_required
+	
 	def get(self):
 		print "\n in ****** create template"
 		return flask.render_template('create_template.html')
 	
-	@login_required
+	
 	def post(self):
 		print "\n in ****** create template"
 		g.db.execute('insert into list_templates (template_title, template_body) values (?, ?)',[request.form['template_title'], request.form['template_body']])
@@ -275,12 +275,12 @@ class Create_Template(flask.views.MethodView):
 		return flask.redirect(flask.url_for('show_templates'))
 	
 class Create_Query(flask.views.MethodView):
-	@login_required
+	
 	def get(self):
 		print "\n in ****** create query"
 		return flask.render_template('create_query.html')
 	
-	@login_required
+	
 	def post(self):
 		print "\n in ****** create query"
 		g.db.execute('insert into queries (query_name, query_channel, query_url) values (?, ?, ?)',[request.form['query_name'], request.form['query_channel'], request.form['query_url']])
@@ -289,11 +289,11 @@ class Create_Query(flask.views.MethodView):
 		return flask.redirect(flask.url_for('show_queries'))
 	
 class Show_Queries(flask.views.MethodView):
-	@login_required
+	
 	def get(self):
 		return flask.render_template('show_queries.html',queries  = get_queries())
 	
-	@login_required
+	
 	def post(self):
 		if 'create_query' in flask.request.form:
 			return flask.redirect(flask.url_for('create_query'))
@@ -313,14 +313,14 @@ class Show_Queries(flask.views.MethodView):
 			#return flask.redirect(flask.url_for('show_queries'))
 
 class Edit_Template(flask.views.MethodView):
-	@login_required
+	
 	def get(self):
 		template_id = request.args.get('id')
 		print template_id
 		return flask.render_template('edit_template.html',selected_template = get_selected_template(template_id))
 		
 	
-	@login_required
+	
 	def post(self):
 		if 'Save' in flask.request.form:
 			template_id = request.form['template_id']
@@ -336,12 +336,12 @@ class Edit_Template(flask.views.MethodView):
 			return flask.redirect(flask.url_for('show_templates'))
 		
 class Show_Message(flask.views.MethodView):
-	@login_required
+	
 	def get(self):
 		msg = request.args.get('show_msg')
 		return flask.render_template('show_message.html',msg = msg)
 	
-	@login_required
+	
 	def post(self):
 		send = False
 		if 'Send' in flask.request.form:
