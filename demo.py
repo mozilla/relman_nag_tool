@@ -145,7 +145,6 @@ def login_required(method):
 	return wrapper
 	
 class Show_Templates(flask.views.MethodView):
-	@login_required
 	def get(self):
 		return flask.render_template('show_templates.html',list_templates  = get_templates())
 	
