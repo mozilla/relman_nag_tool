@@ -34,6 +34,8 @@ DATABASE = '/tmp/flaskr.db'
 DEBUG = True
 app.config.from_object(__name__)
 app.config['PROPAGATE_EXCEPTIONS'] = True
+app.config['APPLICATION_ROOT'] = 'https://b2gtestdrivers.allizom.org/relman_nag'
+
 #db = SQLAlchemy(app)
 def connect_db():
     return sqlite3.connect(app.config['DATABASE'])

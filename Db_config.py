@@ -9,3 +9,4 @@ DEBUG = True
 SECRET_KEY = 'iphone'
 USERNAME = 'admin'
 PASSWORD = 'default'
+APPLICATION_ROOT = 'https://b2gtestdrivers.allizom.org/relman_nag'
