@@ -356,7 +356,7 @@ class Show_Message(flask.views.MethodView):
 		
 
  
-app.add_url_rule('/',view_func=Main.as_view('index'), methods=['GET', 'POST'])
+app.add_url_rule('/',view_func=Main.as_view('index'), methods=['GET'])
 app.add_url_rule('/relman_login',view_func=Main.as_view('relman_login'), methods=['GET','POST'])
 app.add_url_rule('/show_templates', view_func=Show_Templates.as_view('show_templates'), methods=['GET','POST'])
 app.add_url_rule('/create_template', view_func=Create_Template.as_view('create_template'), methods=['GET','POST'])
