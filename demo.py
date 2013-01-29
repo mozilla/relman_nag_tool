@@ -12,6 +12,7 @@ from flask import Flask, request, session, g, redirect, url_for, \
 from contextlib import closing
 from simplekv.memory import DictStore
 from flaskext.kvsession import KVSessionExtension
+from werkzeug.serving import run_simple
 
 # a DictStore will store everything in memory
 # other stores are more useful, like the FilesystemStore, see the simplekv
@@ -30,7 +31,6 @@ KVSessionExtension(store, app)
 app.secret_key = "iphone"
 app.config['DEBUG'] = True
 DATABASE = '/tmp/flaskr.db'
-DEBUG = True
 app.config.from_object(__name__)
 app.config['PROPAGATE_EXCEPTIONS'] = True
 app.config['APPLICATION_ROOT'] = 'https://b2gtestdrivers.allizom.org/relman_nag/'
@@ -103,7 +103,6 @@ def get_queries():
 class Main(flask.views.MethodView):
 	def get(self):
 		return flask.render_template('index.html')
-
 
 	def post(self):
 		if 'logout' in flask.request.form:
@@ -358,7 +357,6 @@ class Show_Message(flask.views.MethodView):
 
  
 app.add_url_rule('/',view_func=Main.as_view('index'), methods=['GET', 'POST'])
-app.add_url_rule('/relman_nag',view_func=Main.as_view('relman_login'), methods=['GET','POST'])
 app.add_url_rule('/show_templates', view_func=Show_Templates.as_view('show_templates'), methods=['GET','POST'])
 app.add_url_rule('/create_template', view_func=Create_Template.as_view('create_template'), methods=['GET','POST'])
 app.add_url_rule('/use_template', view_func=Use_Template.as_view('use_template'), methods=['GET','POST'])
@@ -371,5 +369,4 @@ app.add_url_rule('/edit_template', view_func=Edit_Template.as_view('edit_templat
 app.add_url_rule('/show_message', view_func=Show_Message.as_view('show_message'), methods=['GET','POST'])
 
 if __name__ == '__main__':
-    app.debug = True
-    app.run()
+    run_simple('localhost', 5000, app, use_reloader=True, use_debugger=True, use_evalex=True)
