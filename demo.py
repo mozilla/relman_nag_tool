@@ -18,8 +18,17 @@ from flaskext.kvsession import KVSessionExtension
 # documentation for details
 store = DictStore()
 
+class WebFactionMiddleware(object):
+    def __init__(self, app):
+        self.app = app
+    def __call__(self, environ, start_response):
+        # TODO - get this from config for local or production dev
+        environ['SCRIPT_NAME'] = '/relman_nag'
+        return self.app(environ, start_response)
 
 app = flask.Flask(__name__)
+app.wsgi_app = WebFactionMiddleware(app.wsgi_app)
+
 # Dont do this !
 
 # this will replace the app's session handling
