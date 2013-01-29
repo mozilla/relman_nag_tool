@@ -12,7 +12,6 @@ from flask import Flask, request, session, g, redirect, url_for, \
 from contextlib import closing
 from simplekv.memory import DictStore
 from flaskext.kvsession import KVSessionExtension
-from werkzeug.serving import run_simple
 
 # a DictStore will store everything in memory
 # other stores are more useful, like the FilesystemStore, see the simplekv
@@ -33,7 +32,7 @@ app.config['DEBUG'] = True
 DATABASE = '/tmp/flaskr.db'
 app.config.from_object(__name__)
 app.config['PROPAGATE_EXCEPTIONS'] = True
-app.config['APPLICATION_ROOT'] = 'https://b2gtestdrivers.allizom.org/relman_nag/'
+app.config['APPLICATION_ROOT'] = '/relman_nag'
 
 #db = SQLAlchemy(app)
 def connect_db():
@@ -140,7 +139,6 @@ def login_required(method):
 	return wrapper
 	
 class Show_Templates(flask.views.MethodView):
-	@login_required
 	def get(self):
 		return flask.render_template('show_templates.html',list_templates  = get_templates())
 	
@@ -370,4 +368,4 @@ app.add_url_rule('/edit_template', view_func=Edit_Template.as_view('edit_templat
 app.add_url_rule('/show_message', view_func=Show_Message.as_view('show_message'), methods=['GET','POST'])
 
 if __name__ == '__main__':
-    run_simple('localhost', 5000, app, use_reloader=True, use_debugger=True, use_evalex=True)
+    app.run()
