@@ -25,6 +25,7 @@ class WebFactionMiddleware(object):
     def __call__(self, environ, start_response):
         # TODO - get this from config for local or production dev
         environ['SCRIPT_NAME'] = '/relman_nag'
+        environ['APPLICATION_ROOT'] = '/relman_nag'
         return self.app(environ, start_response)
 
 app = flask.Flask(__name__)
@@ -39,7 +40,6 @@ app.config['DEBUG'] = True
 DATABASE = '/tmp/flaskr.db'
 app.config.from_object(__name__)
 app.config['PROPAGATE_EXCEPTIONS'] = True
-app.config['APPLICATION_ROOT'] = '/relman_nag'
 
 #db = SQLAlchemy(app)
 def connect_db():
