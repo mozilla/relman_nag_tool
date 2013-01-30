@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block body %}
-	
+{{ session }}
 	{% if 'username' in session %}
 		<p>Welcome back {{session['username']}}! </p>
 		<form action="{{url_for('index')}}" method="post">	
