@@ -119,10 +119,15 @@ class Main(flask.views.MethodView):
 				return flask.redirect(flask.url_for('index'))
 		username = flask.request.form['username']
 		passwd = flask.request.form['passwd']
+        print "DEBUG: %s" % username
+        print "DEBUG: %s" % passwd
 		try:
 			flask.session['people'] = phonebook.PhonebookDirectory(username,passwd);
+            print "DEBUG: Got the phonebook"
 			flask.session['username'] = username
+            print "DEBUG: Set the username in session"
 			flask.session['password'] = passwd
+            print "DEBUG: Set the passwd in session"
 		except Exception:
 			flask.flash("Username doesn't exist or incorrect password")
 			return flask.redirect(flask.url_for('index'))
