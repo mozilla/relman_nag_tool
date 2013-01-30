@@ -38,7 +38,6 @@ app.secret_key = "iphone"
 app.config['DEBUG'] = True
 DATABASE = '/tmp/flaskr.db'
 app.config.from_object(__name__)
-app.config['PROPAGATE_EXCEPTIONS'] = True
 
 #db = SQLAlchemy(app)
 def connect_db():
@@ -372,4 +371,5 @@ app.add_url_rule('/edit_template', view_func=Edit_Template.as_view('edit_templat
 app.add_url_rule('/show_message', view_func=Show_Message.as_view('show_message'), methods=['GET','POST'])
 
 if __name__ == '__main__':
+    app.debug = True
     app.run()
