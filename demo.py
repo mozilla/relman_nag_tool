@@ -48,7 +48,7 @@ def init_db():
         with app.open_resource('schema.sql') as f:
             db.cursor().executescript(f.read())
         db.commit()
-        
+
 @app.before_request
 def before_request():
     g.db = connect_db()
@@ -56,7 +56,7 @@ def before_request():
 @app.teardown_request
 def teardown_request(exception):
     g.db.close()
-    
+
 def get_templates():
     cur = g.db.execute('select id,template_title from list_templates order by id desc')
     list_templates = [dict(template_id=row[0],template_title=row[1]) for row in cur.fetchall()]
@@ -96,43 +96,43 @@ def delete_query(query_id):
     g.db.commit()
     print cur
     
-    
+
 def get_queries():
     cur_query = g.db.execute('select id,query_name from queries order by id desc')
     queries = [dict(query_id=row[0],query_name=row[1]) for row in cur_query.fetchall()]
-    print queries 
-    return queries 
+    print queries
+    return queries
 
 
 class Main(flask.views.MethodView):
-	def get(self):
-		return flask.render_template('index.html')
+    def get(self):
+        return flask.render_template('index.html')
 
-	def post(self):
-		if 'logout' in flask.request.form:
-			flask.session.pop('username', None)
-			return flask.redirect(flask.url_for('index'))
-		required = ['username', 'passwd']
-		for r in required:
-			if r not in flask.request.form:
-				flask.flash("Error: {0} is required.".format(r))
-				return flask.redirect(flask.url_for('index'))
-		username = flask.request.form['username']
-		passwd = flask.request.form['passwd']
+    def post(self):
+        if 'logout' in flask.request.form:
+            flask.session.pop('username', None)
+            return flask.redirect(flask.url_for('index'))
+        required = ['username', 'passwd']
+        for r in required:
+            if r not in flask.request.form:
+                flask.flash("Error: {0} is required.".format(r))
+                return flask.redirect(flask.url_for('index'))
+        username = flask.request.form['username']
+        passwd = flask.request.form['passwd']
         print "DEBUG: %s" % username
         print "DEBUG: %s" % passwd
-		try:
-			flask.session['people'] = phonebook.PhonebookDirectory(username,passwd);
+        try:
+            flask.session['people'] = phonebook.PhonebookDirectory(username,passwd);
             print "DEBUG: Got the phonebook"
-			flask.session['username'] = username
+            flask.session['username'] = username
             print "DEBUG: Set the username in session"
-			flask.session['password'] = passwd
+            flask.session['password'] = passwd
             print "DEBUG: Set the passwd in session"
-		except Exception:
-			flask.flash("Username doesn't exist or incorrect password")
-			return flask.redirect(flask.url_for('index'))
-		return flask.redirect(flask.url_for('show_templates'))
-		
+        except Exception:
+            flask.flash("Username doesn't exist or incorrect password")
+            return flask.redirect(flask.url_for('index'))
+        return flask.redirect(flask.url_for('show_templates'))
+
 def login_required(method):
 	@functools.wraps(method)
 	def wrapper(*args, **kwargs):
@@ -145,7 +145,7 @@ def login_required(method):
 		except Exception :
 			print Exception
 	return wrapper
-	
+
 class Show_Templates(flask.views.MethodView):
 	@login_required
 	def get(self):
@@ -167,7 +167,7 @@ class Show_Templates(flask.views.MethodView):
 					return flask.redirect(flask.url_for(show_templates))
 				else :
 					return flask.redirect(flask.url_for('use_template',id=template_id_list[0]))
-				
+			
 			elif flask.request.form['buttonclicked'] == 'edit_template' :
 				numids = len(template_id_list)
 				if  numids != 1:
@@ -177,8 +177,8 @@ class Show_Templates(flask.views.MethodView):
 					return flask.redirect(flask.url_for('edit_template',id=template_id_list[0]))
 			else :
 				return flask.redirect(flask.url_for('delete_template',idlist=template_id_list))
-			
 					      
+
 class Use_Template(flask.views.MethodView):
 	@login_required
 	def get(self):
@@ -197,7 +197,7 @@ class Use_Template(flask.views.MethodView):
 			print flask.session['modified_template']
 			return flask.redirect(flask.url_for('show_queries'))
 					      #return flask.redirect(flask.url_for('show_templates'))
-					      
+
 class Use_Query(flask.views.MethodView):
 	@login_required
 	def get(self):
@@ -230,7 +230,7 @@ class Use_Query(flask.views.MethodView):
 			print modified_template
 			return flask.redirect(flask.url_for('show_queries'))
 					      #return flask.redirect(flask.url_for('show_templates'))
-					      
+
 class Delete_Template(flask.views.MethodView):
 	@login_required
 	def get(self):
@@ -246,7 +246,7 @@ class Delete_Template(flask.views.MethodView):
 		if 'use_template' in flask.request.form:
 			return flask.redirect(flask.url_for('delete_template'))
 					      #return flask.redirect(flask.url_for('show_templates'))
-					      
+
 class Delete_Query(flask.views.MethodView):
 	@login_required
 	def get(self):
@@ -276,7 +276,7 @@ class Create_Template(flask.views.MethodView):
 		g.db.commit()
 		flask.flash('New entry was successfully posted')
 		return flask.redirect(flask.url_for('show_templates'))
-	
+
 class Create_Query(flask.views.MethodView):
 	@login_required
 	def get(self):
@@ -290,7 +290,7 @@ class Create_Query(flask.views.MethodView):
 		g.db.commit()
 		flask.flash('New entry was successfully posted')
 		return flask.redirect(flask.url_for('show_queries'))
-	
+
 class Show_Queries(flask.views.MethodView):
 	@login_required
 	def get(self):
@@ -321,7 +321,7 @@ class Edit_Template(flask.views.MethodView):
 		template_id = request.args.get('id')
 		print template_id
 		return flask.render_template('edit_template.html',selected_template = get_selected_template(template_id))
-		
+	
 	
 	@login_required
 	def post(self):
@@ -337,7 +337,7 @@ class Edit_Template(flask.views.MethodView):
 			g.db.commit()
 			flask.flash('New entry was successfully saved')
 			return flask.redirect(flask.url_for('show_templates'))
-		
+
 class Show_Message(flask.views.MethodView):
 	@login_required
 	def get(self):
@@ -360,9 +360,9 @@ class Show_Message(flask.views.MethodView):
 		except Exception :
 			print "\nException:"
 			print Exception
-		
 
  
+
 app.add_url_rule('/',view_func=Main.as_view('index'), methods=['GET', 'POST'])
 app.add_url_rule('/show_templates', view_func=Show_Templates.as_view('show_templates'), methods=['GET','POST'])
 app.add_url_rule('/create_template', view_func=Create_Template.as_view('create_template'), methods=['GET','POST'])
