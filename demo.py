@@ -31,7 +31,7 @@ app.wsgi_app = WebFactionMiddleware(app.wsgi_app)
 
 #### LOGGING
 format = logging.Formatter(fmt="%(asctime)s-%(levelname)s-%(funcName)s: %(message)s")
-handler = logging.handlers.RotatingFileHandler('relman_nag.log', maxBytes=50000, backupCount=5)
+handler = logging.handlers.RotatingFileHandler('/home/lsblakk/webapps/relman_nag/htdocs/relman_nag.log', maxBytes=50000, backupCount=5)
 handler.setFormatter(format)
 app.logger.addHandler(handler)
 
