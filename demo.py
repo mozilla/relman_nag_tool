@@ -39,6 +39,7 @@ app.config['DEBUG'] = True
 DATABASE = '/tmp/flaskr.db'
 app.config.from_object(__name__)
 app.config['PROPAGATE_EXCEPTIONS'] = True
+app.config['APPLICATION_ROOT'] = '/relman_nag'
 
 #db = SQLAlchemy(app)
 def connect_db():
