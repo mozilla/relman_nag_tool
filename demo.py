@@ -4,8 +4,7 @@ import functools
 import phonebook
 import Test
 import email_nag
-
-# all the imports
+import logging, logging.handlers
 import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash
@@ -29,6 +28,13 @@ class WebFactionMiddleware(object):
 
 app = flask.Flask(__name__)
 app.wsgi_app = WebFactionMiddleware(app.wsgi_app)
+
+#### LOGGING
+format = logging.Formatter(fmt="%(asctime)s-%(levelname)s-%(funcName)s: %(message)s")
+handler = logging.handlers.RotatingFileHandler('relman_nag.log', maxBytes=50000, backupCount=5)
+handler.setFormatter(format)
+app.logger.addHandler(handler)
+
 
 # this will replace the app's session handling
 KVSessionExtension(store, app)
@@ -119,18 +125,20 @@ class Main(flask.views.MethodView):
                 return flask.redirect(flask.url_for('index'))
         username = flask.request.form['username']
         passwd = flask.request.form['passwd']
-        print "DEBUG: %s" % username
-        print "DEBUG: %s" % passwd
+        app.logger.debug("DEBUG: %s" % username)
+        app.logger.debug("DEBUG: %s" % passwd)
         try:
             flask.session['people'] = phonebook.PhonebookDirectory(username,passwd);
-            print "DEBUG: Got the phonebook"
+            app.logger.debug("DEBUG: Got the phonebook")
             flask.session['username'] = username
-            print "DEBUG: Set the username in session"
+            app.logger.debug("DEBUG: Set the username in session")
             flask.session['password'] = passwd
-            print "DEBUG: Set the passwd in session"
+            app.logger.debug("DEBUG: Set the passwd in session")
         except Exception:
             flask.flash("Username doesn't exist or incorrect password")
+            app.logger.debug("DEBUG: got an exception")
             return flask.redirect(flask.url_for('index'))
+        app.logger.debug("DEBUG: got through to the redirect to show_templates")
         return flask.redirect(flask.url_for('show_templates'))
 
 def login_required(method):
