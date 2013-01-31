@@ -66,6 +66,10 @@ def init_db():
 @app.before_request
 def before_request():
     g.db = connect_db()
+    try:
+        g.user = flask.session['username']
+    except Exception:
+        g.user = None
 
 @app.teardown_request
 def teardown_request(exception):
@@ -148,20 +152,17 @@ class Main(flask.views.MethodView):
             return flask.redirect(flask.url_for('index'))
         app.logger.debug("DEBUG: got through to the redirect to show_templates")
         app.logger.debug("DEBUG: url for show_templates: %s" % flask.url_for('show_templates'))
+        
         return flask.redirect(flask.url_for('show_templates'))
 
+
 def login_required(method):
-	@functools.wraps(method)
-	def wrapper(*args, **kwargs):
-		try:
-			if 'username' in flask.session:
-				return method(*args, **kwargs)
-			else:
-				flask.flash("a login is required to view this page!")
-				return flask.redirect(flask.url_for('index'))
-		except Exception :
-			print Exception
-	return wrapper
+    @functools.wraps(method)
+    def wrapper(*args, **kwargs):
+        if g.user is None:
+            return redirect(url_for('index'))
+        return method(*args, **kwargs)
+    return wrapper
 
 class Show_Templates(flask.views.MethodView):
     @login_required
