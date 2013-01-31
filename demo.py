@@ -373,7 +373,7 @@ class Show_Message(flask.views.MethodView):
  
 
 app.add_url_rule('/',view_func=Main.as_view('index'), methods=['GET', 'POST'])
-app.add_url_rule('/relman_nag/show_templates', view_func=Show_Templates.as_view('show_templates'), methods=['GET','POST'])
+app.add_url_rule('/show_templates', view_func=Show_Templates.as_view('show_templates'), methods=['GET','POST'])
 app.add_url_rule('/create_template', view_func=Create_Template.as_view('create_template'), methods=['GET','POST'])
 app.add_url_rule('/use_template', view_func=Use_Template.as_view('use_template'), methods=['GET','POST'])
 app.add_url_rule('/use_query', view_func=Use_Query.as_view('use_query'), methods=['GET','POST'])
