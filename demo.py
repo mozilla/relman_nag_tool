@@ -139,6 +139,7 @@ class Main(flask.views.MethodView):
             app.logger.debug("DEBUG: got an exception")
             return flask.redirect(flask.url_for('index'))
         app.logger.debug("DEBUG: got through to the redirect to show_templates")
+        app.logger.debug("DEBUG: url for show_templates: %s" % flask.url_for('show_templates'))
         return flask.redirect(flask.url_for('show_templates'))
 
 def login_required(method):
