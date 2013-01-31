@@ -158,6 +158,7 @@ def login_required(method):
 class Show_Templates(flask.views.MethodView):
 	@login_required
 	def get(self):
+        app.logger.debug("Yes, we get into the GET for show_templates")
 		return flask.render_template('show_templates.html',list_templates  = get_templates())
 	
 	@login_required
