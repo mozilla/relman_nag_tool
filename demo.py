@@ -66,10 +66,6 @@ def init_db():
 @app.before_request
 def before_request():
     g.db = connect_db()
-    try:
-        g.user = flask.session['username']
-    except Exception:
-        g.user = None
 
 @app.teardown_request
 def teardown_request(exception):
@@ -129,6 +125,7 @@ class Main(flask.views.MethodView):
     def post(self):
         if 'logout' in flask.request.form:
             flask.session.pop('username', None)
+            logout_user()
             return flask.redirect(flask.url_for('index'))
         required = ['username', 'passwd']
         for r in required:
@@ -141,27 +138,19 @@ class Main(flask.views.MethodView):
         app.logger.debug("DEBUG: %s" % passwd)
         try:
             flask.session['people'] = phonebook.PhonebookDirectory(username,passwd);
-            app.logger.debug("DEBUG: Got the phonebook")
             flask.session['username'] = username
-            app.logger.debug("DEBUG: Set the username in session")
             flask.session['password'] = passwd
-            app.logger.debug("DEBUG: Set the passwd in session")
         except Exception:
-            flask.flash("Username doesn't exist or incorrect password")
-            app.logger.debug("DEBUG: got an exception")
+            app.logger.debug("DEBUG: got an exception %s" % Exception.message)
             return flask.redirect(flask.url_for('index'))
-        app.logger.debug("DEBUG: got through to the redirect to show_templates")
-        app.logger.debug("DEBUG: url for show_templates: %s" % flask.url_for('show_templates'))
-        
         return flask.redirect(flask.url_for('show_templates'))
 
 
 def login_required(method):
     @functools.wraps(method)
     def wrapper(*args, **kwargs):
-        app.logger.debug("DEBUG: g.user= %s" % g.user)
-        if g.user is None:
-            app.logger.debug("DEBUG: SEssion= %s" % flask.session['username'])
+        app.logger.debug("DEBUG: SEssion= %s" % flask.session['username'])
+        if not flask.session.has_key('username'):
             return redirect(url_for('index'))
         return method(*args, **kwargs)
     return wrapper
