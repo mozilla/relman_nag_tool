@@ -27,18 +27,18 @@ class WebFactionMiddleware(object):
         return self.app(environ, start_response)
 
 app = flask.Flask(__name__)
-app.wsgi_app = WebFactionMiddleware(app.wsgi_app)
 
-#### LOGGING
-# Production
+# Declaring production globals
+DATABASE = '/tmp/flaskr.db'
 LOGFILE = '/home/lsblakk/webapps/relman_nag/htdocs/relman_nag.log'
-# Local
-# LOGFILE = './relman_nag.log'
-format = logging.Formatter(fmt="%(asctime)s-%(levelname)s-%(funcName)s: %(message)s")
-handler = logging.handlers.RotatingFileHandler(LOGFILE, maxBytes=50000, backupCount=5)
-handler.setFormatter(format)
-app.logger.addHandler(handler)
 
+# Check for local_config to override globals
+try:
+    from local_config import *
+except ImportError:
+    # no local config found, set the middleware
+    app.wsgi_app = WebFactionMiddleware(app.wsgi_app)
+    pass
 
 # this will replace the app's session handling
 KVSessionExtension(store, app)
@@ -46,8 +46,13 @@ KVSessionExtension(store, app)
 # configuration
 app.secret_key = "iphone"
 app.config['DEBUG'] = True
-DATABASE = '/tmp/flaskr.db'
 app.config.from_object(__name__)
+
+#### LOGGING
+format = logging.Formatter(fmt="%(asctime)s-%(levelname)s-%(funcName)s: %(message)s")
+handler = logging.handlers.RotatingFileHandler(LOGFILE, maxBytes=50000, backupCount=5)
+handler.setFormatter(format)
+app.logger.addHandler(handler)
 
 #db = SQLAlchemy(app)
 def connect_db():
