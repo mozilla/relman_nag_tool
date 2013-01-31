@@ -122,9 +122,10 @@ def get_queries():
 class Main(flask.views.MethodView):
     def get(self):
         try:
-            flask.session['people'] = phonebook.PhonebookDirectory(USERNAME,PASSWD);
+            flask.session['people'] = phonebook.PhonebookDirectory(secrets.USERNAME,secrets.PASSWD);
         except Exception:
             app.logger.debug("DEBUG: Exception in getting phonebook: %s" % Exception.message)
+            flask.flash("Could not pull the phonebook")
             return flask.redirect(flask.url_for('index'))
         return flask.redirect(flask.url_for('show_templates'))
 
