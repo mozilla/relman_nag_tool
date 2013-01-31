@@ -159,9 +159,9 @@ class Main(flask.views.MethodView):
 def login_required(method):
     @functools.wraps(method)
     def wrapper(*args, **kwargs):
-        app.logger.debug("DEBUG: g= %s" % g)
+        app.logger.debug("DEBUG: g.user= %s" % g.user)
         if g.user is None:
-            app.logger.debug("DEBUG: SEssion= %s" % flask.session)
+            app.logger.debug("DEBUG: SEssion= %s" % flask.session['username'])
             return redirect(url_for('index'))
         return method(*args, **kwargs)
     return wrapper
