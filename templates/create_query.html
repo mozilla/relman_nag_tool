@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% block body %}
-  {% if 'username' in session %}
     <form action="{{ url_for('create_query') }}" method=post>
       <dl>
         <dt>Query Name:
@@ -13,6 +12,5 @@
         <dd><input type=submit value=Save>
       </dl>
     </form>
-  {% endif %}
 {% endblock %}
 
