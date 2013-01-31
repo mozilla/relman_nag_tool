@@ -30,8 +30,12 @@ app = flask.Flask(__name__)
 app.wsgi_app = WebFactionMiddleware(app.wsgi_app)
 
 #### LOGGING
+# Production
+LOGFILE = '/home/lsblakk/webapps/relman_nag/htdocs/relman_nag.log'
+# Local
+# LOGFILE = './relman_nag.log'
 format = logging.Formatter(fmt="%(asctime)s-%(levelname)s-%(funcName)s: %(message)s")
-handler = logging.handlers.RotatingFileHandler('/home/lsblakk/webapps/relman_nag/htdocs/relman_nag.log', maxBytes=50000, backupCount=5)
+handler = logging.handlers.RotatingFileHandler(LOGFILE, maxBytes=50000, backupCount=5)
 handler.setFormatter(format)
 app.logger.addHandler(handler)
 
@@ -156,11 +160,11 @@ def login_required(method):
 	return wrapper
 
 class Show_Templates(flask.views.MethodView):
-	@login_required
-	def get(self):
+    @login_required
+    def get(self):
         app.logger.debug("Yes, we get into the GET for show_templates")
-		return flask.render_template('show_templates.html',list_templates  = get_templates())
-	
+        return flask.render_template('show_templates.html',list_templates  = get_templates())
+
 	@login_required
 	def post(self):
 		if 'create_template' in flask.request.form:
