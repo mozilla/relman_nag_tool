@@ -12,11 +12,6 @@ from contextlib import closing
 from simplekv.memory import DictStore
 from flaskext.kvsession import KVSessionExtension
 
-# a DictStore will store everything in memory
-# other stores are more useful, like the FilesystemStore, see the simplekv
-# documentation for details
-store = DictStore()
-
 # This is to get the routing on the server to recognize it's under a subdomain
 class WebFactionMiddleware(object):
     def __init__(self, app):
@@ -40,6 +35,10 @@ except ImportError:
     app.wsgi_app = WebFactionMiddleware(app.wsgi_app)
     pass
 
+# a DictStore will store everything in memory
+# other stores are more useful, like the FilesystemStore, see the simplekv
+# documentation for details
+store = DictStore()
 # this will replace the app's session handling
 KVSessionExtension(store, app)
 
