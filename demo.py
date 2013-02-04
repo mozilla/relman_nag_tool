@@ -172,6 +172,7 @@ class Use_Template(flask.views.MethodView):
 		#flask.flash("Not implemented")
 		if 'Next' in flask.request.form:
 			print "***Next\n"
+			print "***Next1\n"
 			#return flask.redirect(flask.url_for('use_template'))
 			print "***Next\n"
 			flask.session['modified_template'] = flask.request.form['template_body']
