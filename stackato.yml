@@ -1,0 +1,10 @@
+name: relman-nag-lsblakk
+framework: python
+runtime: python27
+services:
+  relman-nag-lsblakk-db: postgresql
+requirements:
+  pypm:
+    - flask-sqlalchemy==0.16
+processes:
+  web: python demo.py
