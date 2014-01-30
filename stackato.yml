@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: relman-nag-lsblakk
 framework: python
 runtime: python27
@@ -8,3 +9,23 @@ requirements:
     - flask-sqlalchemy==0.16
 processes:
   web: python demo.py
+=======
+name: relman_nag_tool
+framework: python
+runtime: python27
+
+requirements:
+  pypm:
+    - flask-sqlalchemy==0.16
+    - simplejson==3.0.5
+    - requests==1.0.2
+   
+  pip:
+    - python-memcached
+
+env:
+  PIP_REQUIREMENTS_FILE: requirements.txt
+
+processes:
+  web: python demo.py
+>>>>>>> e9f23ad4351d45040800473692a6447edf16eaf4

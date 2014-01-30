@@ -1,4 +1,5 @@
     Flask==0.9
+<<<<<<< HEAD
     Flask-KVSession==0.3.2
     Flask-Script==0.5.1
     Jinja2==2.6
@@ -12,13 +13,24 @@
     itsdangerous==0.17
     macholib==1.4.2
     modulegraph==0.9.1
+=======
+    Flask-KVSession==0.3
+    Flask-Script==0.5.1
+    Jinja2==2.6
+    httplib2==0.7.6
+>>>>>>> e9f23ad4351d45040800473692a6447edf16eaf4
     py2app==0.6.3
     pyOpenSSL==0.13
     python-dateutil==1.5
     requests==0.14.0
     simplejson==2.6.1
     simplekv==0.5
+<<<<<<< HEAD
     virtualenv==1.8.2
     wsgiref==0.1.2
     xattr==0.6.2
     zope.interface==3.5.1 
+=======
+    xattr==0.6.2
+    remoteobjects==1.2.1
+>>>>>>> e9f23ad4351d45040800473692a6447edf16eaf4

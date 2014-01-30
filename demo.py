@@ -6,13 +6,19 @@ import phonebook
 import Test
 import email_nag
 import logging, logging.handlers
+<<<<<<< HEAD
+=======
+
+# all the imports
+>>>>>>> e9f23ad4351d45040800473692a6447edf16eaf4
 import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash
 from contextlib import closing
-from simplekv.memory import DictStore
-from flaskext.kvsession import KVSessionExtension
+#from simplekv.memory import DictStore
+#from flaskext.kvsession import KVSessionExtension
 
+<<<<<<< HEAD
 # This is to get the routing on the server to recognize it's under a subdomain
 class WebFactionMiddleware(object):
     def __init__(self, app):
@@ -21,6 +27,13 @@ class WebFactionMiddleware(object):
         # TODO - get this from config for local or production dev
         environ['SCRIPT_NAME'] = '/relman_nag'
         return self.app(environ, start_response)
+=======
+# a DictStore will store everything in memory
+# other stores are more useful, like the FilesystemStore, see the simplekv
+# documentation for details
+#store = DictStore()
+
+>>>>>>> e9f23ad4351d45040800473692a6447edf16eaf4
 
 app = flask.Flask(__name__)
 
@@ -41,11 +54,13 @@ except ImportError:
 # documentation for details
 store = DictStore()
 # this will replace the app's session handling
-KVSessionExtension(store, app)
+#KVSessionExtension(store, app)
 
 # configuration
+
 app.secret_key = "iphone"
 app.config['DEBUG'] = True
+<<<<<<< HEAD
 app.config.from_object(__name__)
 
 #### LOGGING
@@ -53,10 +68,24 @@ format = logging.Formatter(fmt="%(asctime)s-%(levelname)s-%(funcName)s: %(messag
 handler = logging.handlers.RotatingFileHandler(LOGFILE, maxBytes=50000, backupCount=5)
 handler.setFormatter(format)
 app.logger.addHandler(handler)
+=======
+DATABASE = '/tmp/flaskr.db'
+LOGFILE = 'relman_nag.log'
+DEBUG = True
+app.config.from_object(__name__)
+app.config['PROPAGATE_EXCEPTIONS'] = True
+
+>>>>>>> e9f23ad4351d45040800473692a6447edf16eaf4
 
 #db = SQLAlchemy(app)
 def connect_db():
     return sqlite3.connect(app.config['DATABASE'])
+
+#### LOGGING 
+format = logging.Formatter(fmt="%(asctime)s-%(levelname)s-%(funcName)s: %(message)s")
+handler = logging.handlers.RotatingFileHandler(LOGFILE, maxBytes=50000, backupCount=5)
+handler.setFormatter(format)
+app.logger.addHandler(handler)
 
 def init_db():
     with closing(connect_db()) as db:
@@ -75,19 +104,19 @@ def teardown_request(exception):
 def get_templates():
     cur = g.db.execute('select id,template_title from list_templates order by id desc')
     list_templates = [dict(template_id=row[0],template_title=row[1]) for row in cur.fetchall()]
-    print list_templates
+    #print list_templates
     return list_templates
 
 def get_selected_template(template_id):
     cur = g.db.execute('select id,template_title,template_body from list_templates where id='+template_id)
     selected_template = [dict(template_id=row[0],template_title=row[1],template_body=row[2]) for row in cur.fetchall()]
-    print selected_template
+    #print selected_template
     return selected_template
 
 def get_selected_query(query_id):
     cur = g.db.execute('select query_name,query_channel,query_url from queries where id='+query_id)
     selected_query = [dict(query_name=row[0],query_channel=row[1],query_url=row[2]) for row in cur.fetchall()]
-    print selected_query
+    #print selected_query
     return selected_query
 
 def get_selected_queries(query_id_list):
@@ -96,27 +125,32 @@ def get_selected_queries(query_id_list):
 		cur = g.db.execute('select query_name,query_channel,query_url from queries where id='+query_id)
 		for row in cur.fetchall():
 			selected_query.append(dict(query_name=row[0],query_channel=row[1],query_url=row[2]))
-	print selected_query
+	#print selected_query
 	return selected_query
 
 def delete_template(template_id):
     cur = g.db.execute('Delete from list_templates where id='+template_id)
     g.db.commit()
     #selected_template = [dict(template_title=row[0],template_body=row[1]) for row in cur.fetchall()]
-    print cur
+    #print cur
     #return selected_template
 
 def delete_query(query_id):
     cur = g.db.execute('Delete from queries where id='+query_id)
     g.db.commit()
-    print cur
+    #print cur
     
 
 def get_queries():
     cur_query = g.db.execute('select id,query_name from queries order by id desc')
     queries = [dict(query_id=row[0],query_name=row[1]) for row in cur_query.fetchall()]
+<<<<<<< HEAD
     print queries
     return queries
+=======
+    #print queries 
+    return queries 
+>>>>>>> e9f23ad4351d45040800473692a6447edf16eaf4
 
 
 class Main(flask.views.MethodView):
@@ -129,6 +163,46 @@ class Main(flask.views.MethodView):
             return flask.redirect(flask.url_for('index'))
         return flask.redirect(flask.url_for('show_templates'))
 
+<<<<<<< HEAD
+=======
+	def post(self):
+		if 'logout' in flask.request.form:
+			flask.session.pop('username', None)
+			return flask.redirect(flask.url_for('index'))
+		required = ['username', 'passwd']
+		for r in required:
+			if r not in flask.request.form:
+				flask.flash("Error: {0} is required.".format(r))
+				return flask.redirect(flask.url_for('index'))
+		username = flask.request.form['username']
+		passwd = flask.request.form['passwd']
+		try:
+			phonebook.PhonebookDirectory(username,passwd);
+			flask.session['username'] = username
+			flask.session['password'] = passwd
+			
+		except Exception:
+			flask.flash("Username doesn't exist or incorrect password")
+			return flask.redirect(flask.url_for('index'))
+		return flask.redirect(flask.url_for('show_templates'))
+		
+def login_required(method):
+	@functools.wraps(method)
+	def wrapper(*args, **kwargs):
+		try:
+			
+			if 'username' in flask.session:
+				return method(*args, **kwargs)
+			else:
+				flask.flash("a login is required to view this page!")
+				return flask.redirect(flask.url_for('index'))
+		except Exception:
+			flask.flash("a login is required to view this page!")
+                        return flask.redirect(flask.url_for('index'))
+			#print Exception
+	return wrapper
+	
+>>>>>>> e9f23ad4351d45040800473692a6447edf16eaf4
 class Show_Templates(flask.views.MethodView):
     def get(self):
         return flask.render_template('show_templates.html',list_templates  = get_templates())
@@ -139,8 +213,8 @@ class Show_Templates(flask.views.MethodView):
 					      #return flask.redirect(flask.url_for('show_templates'))
 		if 'buttonclicked' in flask.request.form:
 			template_id_list = flask.request.form.getlist('template_id')
-			print template_id_list
-			print "*****",flask.request.form['buttonclicked']
+		        #print template_id_list
+			#print "*****",flask.request.form['buttonclicked']
 			if flask.request.form['buttonclicked'] == 'use_template' :
 				numids = len(template_id_list)
 				if  numids != 1:
@@ -164,18 +238,21 @@ class Use_Template(flask.views.MethodView):
 	
 	def get(self):
 		template_id = request.args.get('id')
-		print template_id
+		#print template_id
+		#app.logger.debug("DEBUG: Exception in getting phonebook: %s" % Exception.message)
+		app.logger.debug("DEBUG: Template id: %s" % template_id)
+		
 		return flask.render_template('use_template.html',selected_template = get_selected_template(template_id))
 	
 	
 	def post(self):
 		#flask.flash("Not implemented")
 		if 'Next' in flask.request.form:
-			print "***Next\n"
+			#print "***Next\n"
 			#return flask.redirect(flask.url_for('use_template'))
-			print "***Next\n"
+			#print "***Next\n"
 			flask.session['modified_template'] = flask.request.form['template_body']
-			print flask.session['modified_template']
+			#print flask.session['modified_template']
 			return flask.redirect(flask.url_for('show_queries'))
 					      #return flask.redirect(flask.url_for('show_templates'))
 
@@ -184,31 +261,22 @@ class Use_Query(flask.views.MethodView):
 	def get(self):
 		
 		query_id_list = request.args.getlist('idlist')
-		#print query_id_list+"list"
-		print "***Useget******\n"
-		print flask.session['modified_template']
+		##print query_id_list+"list"
+		#print "***Useget******\n"
+		#print flask.session['modified_template']
 		flask.session['queries'] = get_selected_queries(query_id_list)
-		print "\nprinting from session\n"
-		print flask.session['queries']
-		try :
-			email_nag.nagEmailScript()
-			last_msg, msg = email_nag.getMessage("",False)
-			print "******BB*********\n\n\n",msg
-			if last_msg:
-				return flask.render_template('show_last_message.html',last_msg = msg  )
-			else:
-				return flask.redirect(flask.url_for('show_message',show_msg=msg))
-		except Exception, e :
-			print "\nException:\n"
-			print Exception,e
+		#print "\n#printing from session\n"
+		#print flask.session['queries']
+		return flask.redirect(flask.url_for('show_message'))
+
 	
 	
 	def post(self):
 		#flask.flash("Not implemented")
 		#if 'use_query' in flask.request.form:
-			print "***Use\n"
+			#print "***Use\n"
 			#return flask.redirect(flask.url_for('use_template'))
-			print modified_template
+			#print modified_template
 			return flask.redirect(flask.url_for('show_queries'))
 					      #return flask.redirect(flask.url_for('show_templates'))
 
@@ -216,7 +284,8 @@ class Delete_Template(flask.views.MethodView):
 	
 	def get(self):
 		template_id_list = request.args.getlist('idlist')
-		print template_id_list
+		#print template_id_list
+		app.logger.debug("DEBUG: In Delete_Template and template_id_list: %s" % template_id_list)
 		for template_id in template_id_list:
 			delete_template(template_id)
 		return flask.redirect(flask.url_for('show_templates'))
@@ -232,7 +301,7 @@ class Delete_Query(flask.views.MethodView):
 	
 	def get(self):
 		query_id_list = request.args.getlist('idlist')
-		print query_id_list
+		#print query_id_list
 		for query_id in query_id_list:
 			delete_query(query_id)
 		return flask.redirect(flask.url_for('show_queries'))
@@ -247,12 +316,12 @@ class Delete_Query(flask.views.MethodView):
 class Create_Template(flask.views.MethodView):
 	
 	def get(self):
-		print "\n in ****** create template"
+		#print "\n in ****** create template"
 		return flask.render_template('create_template.html')
 	
 	
 	def post(self):
-		print "\n in ****** create template"
+		#print "\n in ****** create template"
 		g.db.execute('insert into list_templates (template_title, template_body) values (?, ?)',[request.form['template_title'], request.form['template_body']])
 		g.db.commit()
 		flask.flash('New entry was successfully posted')
@@ -261,12 +330,12 @@ class Create_Template(flask.views.MethodView):
 class Create_Query(flask.views.MethodView):
 	
 	def get(self):
-		print "\n in ****** create query"
+		#print "\n in ****** create query"
 		return flask.render_template('create_query.html')
 	
 	
 	def post(self):
-		print "\n in ****** create query"
+		#print "\n in ****** create query"
 		g.db.execute('insert into queries (query_name, query_channel, query_url) values (?, ?, ?)',[request.form['query_name'], request.form['query_channel'], request.form['query_url']])
 		g.db.commit()
 		flask.flash('New entry was successfully posted')
@@ -283,8 +352,8 @@ class Show_Queries(flask.views.MethodView):
 			return flask.redirect(flask.url_for('create_query'))
 		if 'querybuttonclicked' in flask.request.form:
 			query_id_list = flask.request.form.getlist('query_id')
-			print query_id_list
-			print "*****",flask.request.form['querybuttonclicked']
+			#print query_id_list
+			#print "*****",flask.request.form['querybuttonclicked']
 			if flask.request.form['querybuttonclicked'] == 'use_query' :
 				
 				return flask.redirect(flask.url_for('use_query',idlist=query_id_list))
@@ -300,7 +369,7 @@ class Edit_Template(flask.views.MethodView):
 	
 	def get(self):
 		template_id = request.args.get('id')
-		print template_id
+		#print template_id
 		return flask.render_template('edit_template.html',selected_template = get_selected_template(template_id))
 	
 	
@@ -309,12 +378,10 @@ class Edit_Template(flask.views.MethodView):
 		if 'Save' in flask.request.form:
 			template_id = request.form['template_id']
 			modified_template_body = request.form['template_body']
-			print "\najjsj\n"
-			Test.test_session_variable()
-			print modified_template_body
-			print template_id
-			
-			g.db.execute('update list_templates SET template_body=\"'+modified_template_body+'\" where id='+template_id)
+			modified_template_title = request.form['template_title']
+			#print "\najjsj\n"
+			#Test.test_session_variable()
+			g.db.execute('update list_templates SET template_body=\"'+modified_template_body+'\",template_title=\"'+modified_template_title+'\" where id='+template_id)
 			g.db.commit()
 			flask.flash('New entry was successfully saved')
 			return flask.redirect(flask.url_for('show_templates'))
@@ -322,6 +389,7 @@ class Edit_Template(flask.views.MethodView):
 class Show_Message(flask.views.MethodView):
 	
 	def get(self):
+<<<<<<< HEAD
 		msg = request.args.get('show_msg')
 		return flask.render_template('show_message.html',msg = msg)
 	
@@ -345,6 +413,38 @@ class Show_Message(flask.views.MethodView):
  
 
 app.add_url_rule('/',view_func=Main.as_view('index'), methods=['GET'])
+=======
+		try :
+		    send_msg, manual_notify_msg = email_nag.nagEmailScript()
+		    #print "MESSAGES:\n"
+		    #for msg in send_msg:
+		    #print msg, "\n"
+		    return flask.render_template('show_message.html', send_msg = send_msg, manual_notify = manual_notify_msg)
+		except Exception,e:
+		    #return flask.redirect(flask.url_for('show_message'))
+		    print '\nlogin error:\n', e
+		    print '\n'
+		    
+		    
+	@login_required
+	def post(self):
+		msg_id_list = flask.request.form.getlist('messageid')
+		for msgid in msg_id_list:
+		    #print msgid,"\n\n"
+		    #print flask.request.form[msgid]
+		    email_nag.sendMail(flask.request.form[msgid])
+		#print "\n\n", flask.request.form['manual_notify']
+		manual_notify= flask.request.form['manual_notify']
+		return flask.render_template('manual_notify.html',manual_notify = manual_notify )
+		
+		
+		
+		
+
+app.add_url_rule('/',view_func=Main.as_view('index'), methods=['GET','POST'])
+#app.add_url_rule('/'relman_nag,view_func=Main.as_view('index'), methods=['GET','POST'])
+#app.add_url_rule('/relman_nag',view_func=Main.as_view('login'), methods=['GET','POST'])
+>>>>>>> e9f23ad4351d45040800473692a6447edf16eaf4
 app.add_url_rule('/show_templates', view_func=Show_Templates.as_view('show_templates'), methods=['GET','POST'])
 app.add_url_rule('/create_template', view_func=Create_Template.as_view('create_template'), methods=['GET','POST'])
 app.add_url_rule('/use_template', view_func=Use_Template.as_view('use_template'), methods=['GET','POST'])
@@ -359,3 +459,7 @@ app.add_url_rule('/show_message', view_func=Show_Message.as_view('show_message')
 if __name__ == '__main__':
     app.debug = True
     app.run()
+<<<<<<< HEAD
+=======
+
+>>>>>>> e9f23ad4351d45040800473692a6447edf16eaf4

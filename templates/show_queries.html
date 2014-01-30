@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block body %}
+<<<<<<< HEAD
 		<form action="{{url_for('index')}}" method="post">	
 			<input type="submit" name="logout" value="logout"/>
 		</form>
@@ -29,6 +30,60 @@
 		<input type="submit" name="create_template" value="Create New Template"/>
 		<input type="hidden" id="buttonclicked" name="buttonclicked">
 			
+=======
+	{% if 'username' in session %}
+		<header>
+			<form action="{{url_for('index')}}" method="post">
+				Welcome back {{session['username']}}!
+				<input type="submit" name="logout" value="logout"/>
+			</form>
+		</header>	
+			
+		<form name="query" action="{{url_for('show_queries')}}" method="post">
+		
+		<div class="wrapper">
+			<table id="query_list" rules="rows" border="1" width="400">
+				<tbody>
+					<tr class="title">
+						<th width="5%"><input id="checkAllQueries" onclick="toggleQueryCheckBoxes(this)" type="CHECKBOX"></th> 
+						<th width="95%" align="left">Query Name</th>
+						{% for query in queries %}
+						</tr><tr>
+						<td width="5%"><input value={{ query.query_id }} type="CHECKBOX" name="query_id"></td>
+						<td width="95%">{{ query.query_name }}</td>
+						{% else %}
+						</tr><td width="100%">Unbelievable.  No queries here so far</td>
+						{% endfor %}
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<ul class="actions">
+			<li>
+				<input type="button" name="use_query" onclick="validateUseQuery('use_query')" value="Use"/>
+			</li>
+			<li>
+				<input type="button" name="delete_query" onclick="validateDeleteQuery('delete_query')" value="Delete"/>
+			</li>
+			<li>
+				<input type="submit" name="create_query" value="Create New Query"/>
+			</li>
+			<li>
+				<input type="hidden" id="querybuttonclicked" name="querybuttonclicked">
+			</li>
+		</ul>
+	{% else %}
+		<p>A login is required:</p>
+		<form action="{{url_for('index')}}" method="post">
+			<p>Username:<br />
+			<input type="text" name="username" /></p>
+			<p>Password:<br />
+			<input type="password" name="passwd" /></p>
+			<p><input type="submit" value="submit" /></p>
+		</form>
+	{% endif %}
+>>>>>>> e9f23ad4351d45040800473692a6447edf16eaf4
 		{% with messages = get_flashed_messages() %}
 					{% for message in messages %}
 								{{message}}
