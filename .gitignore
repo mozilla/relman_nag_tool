@@ -1,0 +1,4 @@
+secrets.py
+local_config.py
+*.log
+*.pyc
